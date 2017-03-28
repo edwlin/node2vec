@@ -86,7 +86,7 @@ object Node2vec extends Serializable {
   
   def randomWalk(): this.type = {
     val edge2attr = graph.triplets.map { edgeTriplet =>
-      (s"${edgeTriplet.srcId}${edgeTriplet.dstId}", edgeTriplet.attr)
+      (s"${edgeTriplet.srcId}-${edgeTriplet.dstId}", edgeTriplet.attr)
     }.repartition(200).cache
     edge2attr.first
     
@@ -106,7 +106,7 @@ object Node2vec extends Serializable {
           val prevNodeId = pathBuffer(pathBuffer.length - 2)
           val currentNodeId = pathBuffer.last
 
-          (s"$prevNodeId$currentNodeId", (srcNodeId, pathBuffer))
+          (s"$prevNodeId-$currentNodeId", (srcNodeId, pathBuffer))
         }.join(edge2attr).map { case (edge, ((srcNodeId, pathBuffer), attr)) =>
           try {
             val nextNodeIndex = GraphOps.drawAlias(attr.J, attr.q)
