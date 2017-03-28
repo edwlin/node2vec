@@ -88,7 +88,6 @@ object Node2vec extends Serializable {
     val edge2attr = graph.triplets.map { edgeTriplet =>
       (s"${edgeTriplet.srcId}${edgeTriplet.dstId}", edgeTriplet.attr)
     }.repartition(200).cache
-    edge2attr.first
     
     for (iter <- 0 until config.numWalks) {
       var prevWalk: RDD[(Long, ArrayBuffer[Long])] = null
